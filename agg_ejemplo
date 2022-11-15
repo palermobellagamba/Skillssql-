@@ -1,0 +1,60 @@
+#Selecciona/contesta tres preguntas del archivo ej_joins.txt y dos preguntas del archivo ej_agg.txt
+Crea un script de SQL que muestre como llegaste a tu respuesta.
+
+/*ej_agg.txt Question #5 DOS PREGUNTAS DEL ARCHIVO EJ_AGG.TXT TWO QUESTIONS
+Via what channel did the most recent (latest) web_event occur, 
+which account was associated with this web_event? Your query 
+should return only three values - the date, channel, and account name.SAVEPOINT
+*/
+SELECT w.occurred_at last_webevent, w.channel channel, a.name acct_name
+FROM web_events w 
+JOIN accounts a
+ON w.account_id =a.id
+ORDER BY w.occurred_at DESC 
+LIMIT 1
+
+/*ej_agg.txt Question #2 DOS PREGUNTAS DEL ARCHIVO EJ_AGG.TXT TWO QUESTIONS
+When did the most recent (latest) web_event occur?
+*/
+SELECT MAX(occurred_at) last_order
+FROM orders
+
+/*4. #  TRES  PREGUNTAS DEL ARCHIVO EJ_JOINS Provide the name for each region for every order, as well as the account name and the unit price they paid
+(total_amt_usd/total) for the order. However, you should only provide the results if the standard order quantity exceeds 100.
+Your final table should have 3 columns: region name, account name, and unit price. In order to avoid a division by zero error,
+adding .01 to the denominator here is helpful total_amt_usd/(total+0.01).
+*/
+SELECT r.name region, a.name account, o.total_amt_usd/(o.total + 0.01) unit_price
+FROM region r
+JOIN sales_reps s
+ON s.region_id = r.id
+JOIN accounts a
+ON a.sales_rep_id = s.id
+JOIN orders o
+ON o.account_id = a.id
+WHERE o.standard_qty > 100
+/*2. TRES  PREGUNTAS DEL ARCHIVO EJ_JOINS 3.Provide a table that provides the region for each sales_rep along with their associated accounts.
+This time only for accounts where the sales rep has a first name starting with S and in the Midwest region.
+Your final table should include three columns: the region name, the sales rep name, and the account name.
+Sort the accounts alphabetically (A-Z) according to account name.
+*/
+SELECT r.name region, s.name rep, a.name account
+FROM sales_reps s
+JOIN region r
+ON s.region_id = r.id
+JOIN accounts a
+ON a.sales_rep_id = s.id
+WHERE r.name = 'Midwest' AND s.name LIKE 'S%'
+ORDER BY a.name
+/*1.Provide a table that provides the region for each sales_rep along with their associated accounts.
+This time only for the Midwest region. Your final table should include three columns: the region name,
+the sales rep name, and the account name. Sort the accounts alphabetically (A-Z) according to account name.
+*/
+SELECT r.name region, s.name rep, a.name account
+FROM sales_reps s
+JOIN region r
+ON s.region_id = r.id
+JOIN accounts a
+ON a.sales_rep_id = s.id
+WHERE r.name = 'Midwest'
+ORDER BY a.name
